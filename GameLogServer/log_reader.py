@@ -4,6 +4,7 @@ import time
 import random
 import string
 
+
 class LogReader(object):
     def __init__(self):
         self.log_file_sizes = {}
@@ -32,7 +33,7 @@ class LogReader(object):
 
         # get the new file size
         new_file_size = self.file_length(path)
-          
+
         # the log size was unable to be read (probably the wrong path)
         if new_file_size < 0:
             return self._generate_bad_response()
@@ -40,38 +41,31 @@ class LogReader(object):
         next_retrieval_key = self._generate_key()
 
         # this is the first time the key has been requested, so we need to the next one
-        if retrieval_key not in self.log_file_sizes or int(time.time() - self.log_file_sizes[retrieval_key]['read']) > self.max_file_time_change:
-            print('retrieval key "%s" does not exist or is outdated' % retrieval_key)
+        if retrieval_key not in self.log_file_sizes or int(
+                time.time() - self.log_file_sizes[retrieval_key]['read']) > self.max_file_time_change:
             last_log_info = {
-                'size' : new_file_size,
-                'previous_key' : None
+                'size': new_file_size,
+                'previous_key': None
             }
         else:
             last_log_info = self.log_file_sizes[retrieval_key]
 
-        print('next key is %s' % next_retrieval_key)
         expired_key = last_log_info['previous_key']
-        print('expired key is %s' % expired_key)
 
         # grab the previous value
         last_size = last_log_info['size']
         file_size_difference = new_file_size - last_size
 
-        #print('generating info for next key %s' % next_retrieval_key)
-
         # update the new size
         self.log_file_sizes[next_retrieval_key] = {
-            'size' : new_file_size,
+            'size': new_file_size,
             'read': time.time(),
             'next_key': next_retrieval_key,
             'previous_key': retrieval_key
         }
 
         if expired_key in self.log_file_sizes:
-            print('deleting expired key %s' % expired_key)
             del self.log_file_sizes[expired_key]
-
-        #print('reading %i bytes starting at %i' % (file_size_difference, last_size))
 
         new_log_content = self.get_file_lines(path, last_size, file_size_difference)
         return {
@@ -93,9 +87,9 @@ class LogReader(object):
             return False
 
     def _clear_old_logs(self):
-        expired_logs = [path for path in self.log_file_sizes if int(time.time() - self.log_file_sizes[path]['read']) > self.max_file_time_change]
+        expired_logs = [path for path in self.log_file_sizes if
+                        int(time.time() - self.log_file_sizes[path]['read']) > self.max_file_time_change]
         for key in expired_logs:
-            print('removing expired log with key {0}'.format(key))
             del self.log_file_sizes[key]
 
     def _generate_bad_response(self):
@@ -106,7 +100,7 @@ class LogReader(object):
 
     def _generate_key(self):
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        
+
     def file_length(self, path):
         try:
             return os.stat(path).st_size
@@ -114,5 +108,6 @@ class LogReader(object):
             print('could not get the size of the log file at {0}'.format(path))
             print(e)
             return -1
+
 
 reader = LogReader()
