@@ -4,10 +4,10 @@ The game log server provides a way to remotely host your server's log over a htt
 This feature is useful if you plan on running IW4MAdmin on a different machine than the game server.
 
 ## Requirements
-- [Python 3.8.x](https://www.python.org/downloads/) or newer
+- [Python 3.9.x](https://www.python.org/downloads/) or newer
 
 ## Installing
-1. With Python 3.x installed, open up a terminal/command prompt window in the `GameLogServer` folder and execute:
+1. With Python 3.9.x installed, open up a terminal/command prompt window in the `GameLogServer` folder and execute:
     ```console
     pip install -r requirements.txt
     ```
